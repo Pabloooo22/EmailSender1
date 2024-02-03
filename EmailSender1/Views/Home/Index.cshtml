@@ -1,0 +1,59 @@
+﻿@model EmailEntity
+
+
+<div class="card shadow border-0">
+    <div class="card-header bg-secondary bg-gradient">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2>Send Email</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-body p-2"  >
+        <form method="post" enctype="multipart/form-data" asp-action="SendEmail" asp-controller="Home">
+
+            <div class="col-12">
+                <label>Send to:</label>
+                <input asp-for="ToEmailAdress" class="form-control" required/>
+            </div>
+
+            <div class="col-12">
+                <label>Email subject:</label>
+                <input asp-for="EmailSubject" class="form-control" required/>
+            </div>
+
+            <div class="col-12">
+                <label>Email message</label>
+                 @Html.TextArea("EmailContent", htmlAttributes: new { name = "editor", id = "editor" })
+
+                <script src="assets/vendor/ckeditor5/build/ckeditor.js"></script>
+                <script>
+                        ClassicEditor
+                            .create( document.querySelector( '#editor' ) )
+                            .catch( error => {
+                                console.error( error );
+                            } );
+                 </script>
+
+            </div>
+
+            <br />
+            <div class="row">
+                <div class="col-6">
+                    <button type="submit" class="btn btn-primary button">Send Email</button>
+                </div>
+            </div>
+
+            <div class="form-group text-center" >
+                <div class="text-succes" >
+                    @if (TempData["alert"] != null)
+                    {
+                        @TempData["alert"]
+                        ;
+                    }
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
