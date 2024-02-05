@@ -26,9 +26,8 @@ namespace EmailSender.Controllers
         }
  
         [HttpPost]
-        public IActionResult SendEmail(EmailEntity emailParameters, SendMailService mailService, IFormCollection formValues)
+        public IActionResult SendEmail(EmailEntity emailParameters, SendMailService mailService)
         {
-            emailParameters.EmailContent = formValues["EmailContent"];
 
             try
             {
