@@ -1,5 +1,7 @@
 using EmailSender;
 using EmailSender.Models.Entities;
+using EmailSender.Services;
+using Microsoft.Extensions.DependencyInjection;
 using static System.Formats.Asn1.AsnWriter;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<EmailReciverDbContext>();
 builder.Services.AddScoped<Seeder>();
+builder.Services.AddScoped<IAdressBookService, AdressBookService>();
 
 var app = builder.Build();
 

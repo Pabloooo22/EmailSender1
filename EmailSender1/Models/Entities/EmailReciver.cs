@@ -10,5 +10,8 @@ namespace EmailSender.Models.Entities
         [EmailAddress]
         public string? EmailAdress { get; set; }
         public CsvInformations? csvInformations { get; set; }
+
+        public AdressBook? AdressesBook { get; set; }
+        public int AdressesBookId { get; internal set; }
     }
 }

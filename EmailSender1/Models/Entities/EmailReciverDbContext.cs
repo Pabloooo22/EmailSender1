@@ -7,6 +7,7 @@ namespace EmailSender.Models.Entities
         private string _connectionString =
             "Server=localhost;Database=EmailReciversDb1;Trusted_Connection=True;Encrypt=False;";
         public DbSet<EmailReciver> emailRecivers { get; set; }
+        public DbSet<AdressBook> adresses { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

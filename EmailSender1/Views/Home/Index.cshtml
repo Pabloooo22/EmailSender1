@@ -10,21 +10,30 @@
         </div>
     </div>
 
+    <div>
+            <form asp-controller="Home" asp-action="Index" method="post" enctype="multipart/form-data">
+                <input type="file" name="postedFile" />
+                <button type="submit" class="btn btn-primary button" >Import</button>
+            </form>
+    </div>
+
     <div class="card-body p-2"  >
         <form method="post" enctype="multipart/form-data" asp-action="SendEmail" asp-controller="Home">
 
             <div class="col-12">
-                <label>Send to:</label>
-                <input asp-for="ToEmailAdress" class="form-control" required/>
+                <label asp-for="ToAdressBook" class="control-label"> Adress book</label>
+                <select asp-for="ToAdressBook" asp-items="@ViewBag.AdressBookList" class="form-select">
+                    <option disabled selected>--Select Adress Book--</option>
+                </select>
             </div>
 
             <div class="col-12">
-                <label>Email subject:</label>
+                <label asp-for="EmailSubject" class="control-label">Email subject:</label>
                 <input asp-for="EmailSubject" class="form-control" required/>
             </div>
 
             <div class="col-12">
-                <label>Email message</label>
+                <label asp-for="EmailContent" class="control-label">Email message</label>
                  <textarea asp-for="EmailContent" rows="10" cols="20" class="form-control" id="editor"></textarea>
 
                 <script src="assets/vendor/ckeditor5/build/ckeditor.js"></script>

@@ -17,18 +17,15 @@ namespace EmailSender
 
         public void Seed()
         {
-            if (_dbContext.Database.CanConnect()) 
-            {
-                if (!_dbContext.emailRecivers.Any())
-                {
-                    if (File.Exists(CSVpath))
-                    {
-                        var recivers = GetRecivers();
-                        _dbContext.emailRecivers.AddRange(recivers);
-                        _dbContext.SaveChanges();
-                    }
-                }
-            }
+            //if (_dbContext.Database.CanConnect()) 
+            //{
+            //    if (File.Exists(CSVpath))
+            //    {
+            //        var recivers = GetRecivers();
+            //        _dbContext.emailRecivers.AddRange(recivers);
+            //        _dbContext.SaveChanges();
+            //    }
+            //}
         }
 
         private IEnumerable<EmailReciver> GetRecivers()

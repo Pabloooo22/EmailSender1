@@ -21,6 +21,23 @@ namespace EmailSender1.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("EmailSender.Models.Entities.AdressBook", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("adresses");
+                });
+
             modelBuilder.Entity("EmailSender.Models.Entities.EmailReciver", b =>
                 {
                     b.Property<int>("Id")
@@ -28,6 +45,9 @@ namespace EmailSender1.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AdressesBookId")
+                        .HasColumnType("int");
 
                     b.Property<string>("EmailAdress")
                         .HasColumnType("nvarchar(max)");
@@ -40,11 +60,19 @@ namespace EmailSender1.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AdressesBookId");
+
                     b.ToTable("emailRecivers");
                 });
 
             modelBuilder.Entity("EmailSender.Models.Entities.EmailReciver", b =>
                 {
+                    b.HasOne("EmailSender.Models.Entities.AdressBook", "AdressesBook")
+                        .WithMany("EmailRecivers")
+                        .HasForeignKey("AdressesBookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.OwnsOne("EmailSender.Models.Entities.CsvInformations", "csvInformations", b1 =>
                         {
                             b1.Property<int>("EmailReciverId")
@@ -73,7 +101,14 @@ namespace EmailSender1.Migrations
                                 .HasForeignKey("EmailReciverId");
                         });
 
+                    b.Navigation("AdressesBook");
+
                     b.Navigation("csvInformations");
+                });
+
+            modelBuilder.Entity("EmailSender.Models.Entities.AdressBook", b =>
+                {
+                    b.Navigation("EmailRecivers");
                 });
 #pragma warning restore 612, 618
         }
