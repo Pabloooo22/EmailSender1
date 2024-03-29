@@ -43,7 +43,7 @@ namespace EmailSender.Controllers
             try
             {
                 var toEmails = _adressBookServiceService.GetEmailsListFromAdressBook(emailParameters.ToAdressBook);
-                mailService.Email(toEmails, emailParameters.EmailSubject, emailParameters.EmailContent);
+                mailService.Email(toEmails, emailParameters.EmailSubject, emailParameters.EmailContent, emailParameters.EmailPostedFile);
                 TempData["alert"] = "Email Sucessfully Sent";
             }
             catch (Exception)
