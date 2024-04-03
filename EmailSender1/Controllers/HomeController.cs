@@ -11,6 +11,7 @@ using System.Web;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.IO;
 
 namespace EmailSender.Controllers
 {
@@ -18,11 +19,13 @@ namespace EmailSender.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IAdressBookService _adressBookServiceService;
+        private readonly IWebHostEnvironment _env;
 
-        public HomeController(ILogger<HomeController> logger, IAdressBookService adressBookServiceService)
+        public HomeController(ILogger<HomeController> logger, IAdressBookService adressBookServiceService, IWebHostEnvironment environment)
         {
             _logger = logger;
             _adressBookServiceService = adressBookServiceService;
+            _env = environment;
         }
 
         public IActionResult Index()
@@ -70,6 +73,29 @@ namespace EmailSender.Controllers
                 TempData["alert"] = "Upload failed. File has the wrong extension or the name is taken";
             }
             return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public IActionResult UploadImage()
+        {
+            string imageBase64String = "";
+            foreach (IFormFile file in Request.Form.Files)
+            {
+                string path = Path.Combine(_env.WebRootPath, "Image\\");
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+                string filePath = path + Path.GetFileName(file.FileName);
+                using (FileStream stream = new FileStream(filePath, FileMode.Create))
+                {
+                    file.CopyTo(stream);
+                }
+                byte[] imageBytes = System.IO.File.ReadAllBytes(filePath);
+                imageBase64String = Convert.ToBase64String(imageBytes);
+            }
+            string imagePath = "data:image/png;base64," + imageBase64String;
+            return Json(new { url = imagePath });
         }
 
         public IActionResult Delete()
