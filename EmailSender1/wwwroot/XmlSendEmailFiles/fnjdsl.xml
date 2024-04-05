@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<SendingDetails>
+	<ToAdressBook>EmailRecivers.csv</ToAdressBook>
+	<EmailSubject>Test</EmailSubject>
+	<EmailContent>Test content</EmailContent>
+	<EmailPostedFile>proba.jpg</EmailPostedFile>
+	<EmailsPerHour>1000</EmailsPerHour>
+</SendingDetails>

@@ -9,5 +9,6 @@ namespace EmailSender.Models
         public string EmailSubject { get; set; }
         public string EmailContent { get; set; }
         public IFormFile EmailPostedFile { get; set; }
+        public int EmailsPerHour { get; set; } = 100;
     }
 }

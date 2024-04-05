@@ -12,25 +12,29 @@ using Microsoft.EntityFrameworkCore;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.IO;
+using Microsoft.VisualBasic;
+using Microsoft.Extensions.FileSystemGlobbing;
+using EmailSender.Models.Entities;
+using System.Xml.Serialization;
 
 namespace EmailSender.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly IAdressBookService _adressBookServiceService;
+        private readonly IAdressBookService _adressBookService;
         private readonly IWebHostEnvironment _env;
 
-        public HomeController(ILogger<HomeController> logger, IAdressBookService adressBookServiceService, IWebHostEnvironment environment)
+        public HomeController(ILogger<HomeController> logger, IAdressBookService adressBookServiceService, IWebHostEnvironment environment, IFileWatcherService fileWatcher)
         {
             _logger = logger;
-            _adressBookServiceService = adressBookServiceService;
+            _adressBookService = adressBookServiceService;
             _env = environment;
         }
 
         public IActionResult Index()
         {
-            ViewBag.AdressBookList = _adressBookServiceService.GetAdressBookList();
+            ViewBag.AdressBookList = _adressBookService.GetAdressBookList();
 
             return View();
         }
@@ -45,8 +49,8 @@ namespace EmailSender.Controllers
         {
             try
             {
-                var toEmails = _adressBookServiceService.GetEmailsListFromAdressBook(emailParameters.ToAdressBook);
-                mailService.Email(toEmails, emailParameters.EmailSubject, emailParameters.EmailContent, emailParameters.EmailPostedFile);
+                var toEmails = _adressBookService.GetEmailsListFromAdressBook(emailParameters.ToAdressBook);
+                mailService.Email(toEmails, emailParameters.EmailSubject, emailParameters.EmailContent, emailParameters.EmailPostedFile, emailParameters.EmailsPerHour);
                 TempData["alert"] = "Email Sucessfully Sent";
             }
             catch (Exception)
@@ -63,15 +67,24 @@ namespace EmailSender.Controllers
         {
             if (postedFile != null && 
                 Path.GetExtension(postedFile.FileName).Equals(".csv", StringComparison.OrdinalIgnoreCase) && 
-                _adressBookServiceService.IsNameUsed(postedFile))
+                _adressBookService.IsNameUsed(postedFile))
             {
-                _adressBookServiceService.UploadFile(postedFile);
+                _adressBookService.UploadFile(postedFile);
                 TempData["alert"] = "File sucessfully upload";
             }
             else
             {
                 TempData["alert"] = "Upload failed. File has the wrong extension or the name is taken";
             }
+
+            return RedirectToAction("Index");
+        }
+
+
+        public IActionResult Delete()
+        {
+            var adressBookId = 6;
+            _adressBookService.DeleteAddresBook(adressBookId);
             return RedirectToAction("Index");
         }
 
@@ -98,17 +111,10 @@ namespace EmailSender.Controllers
             return Json(new { url = imagePath });
         }
 
-        public IActionResult Delete()
-        {
-            var adressBookId = 1;
-            _adressBookServiceService.DeleteAddresBook(adressBookId);
-            return RedirectToAction("Index");
-        }
-
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+        }          
     }
 }

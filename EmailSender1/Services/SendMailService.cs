@@ -11,7 +11,7 @@ namespace EmailSender.Services
 {
     public class SendMailService
     {
-        public async void Email(List<string> sendTo, string emailSubject, string emailMessage, IFormFile emailPostedFile)
+        public async void Email(List<string> sendTo, string emailSubject, string emailMessage, IFormFile emailPostedFile, int emailsPerHour)
         {
             var appConfig = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
             var username = appConfig.GetValue<string>("EmailConfig:Username");
@@ -25,6 +25,7 @@ namespace EmailSender.Services
             smtpClient.EnableSsl = true;
             smtpClient.Credentials = new NetworkCredential(username, password);
             smtpClient.DeliveryMethod = System.Net.Mail.SmtpDeliveryMethod.Network;
+
 
             foreach (var email in sendTo)
             {
@@ -40,7 +41,7 @@ namespace EmailSender.Services
                 }
                 mailMessage.Priority = MailPriority.Normal;
                 smtpClient.Send(mailMessage);
-                Thread.Sleep(36000);
+                Thread.Sleep(3600000 / emailsPerHour);
             }
         }
 

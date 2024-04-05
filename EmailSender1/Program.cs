@@ -11,6 +11,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<EmailReciverDbContext>();
 builder.Services.AddScoped<Seeder>();
 builder.Services.AddScoped<IAdressBookService, AdressBookService>();
+builder.Services.AddScoped<IFileWatcherService, FileWatcherService>();
 
 var app = builder.Build();
 
@@ -24,7 +25,6 @@ if (!app.Environment.IsDevelopment())
 
 var scope = app.Services.CreateScope();
 var seeder = scope.ServiceProvider.GetRequiredService<Seeder>();
-
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
