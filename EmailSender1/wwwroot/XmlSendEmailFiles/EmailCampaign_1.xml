@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE SendingDetails [
+<!ENTITY nbsp "&#160;">
+]>
+<SendingDetails><ToAdressBook>EmailRecivers_1.csv</ToAdressBook><EmailSubject>produkty BotanicHELP zawsze w dobrej cenie</EmailSubject><EmailContent>&lt;div&gt;Dzień dobry,&lt;br&gt;&lt;br&gt;Przesyłamy aktualną&nbsp; ofertę dostepną dla Państwa.&lt;br&gt;&lt;br&gt;&lt;strong&gt;&lt;em&gt;Karolina Kozioł&lt;/em&gt;&lt;/strong&gt;&lt;br&gt;Manager ds.sprzedaży i marketingu&lt;br&gt;telefon:&nbsp; &nbsp; &nbsp; &nbsp;732 672 588&lt;br&gt;mail:&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&lt;a href="mailto:kk@bioxon.pl"&gt;kk@bioxon.pl&lt;/a&gt;&lt;br&gt;&lt;br&gt;Bioxon Laboratorium Sp z o.o.&lt;br&gt;ul. Glazurowa 7&nbsp;&lt;br&gt;80-180&nbsp; Kowale,&lt;br&gt;NIP: &nbsp; 6040162120&lt;br&gt;REGON: &nbsp; 222050322&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;br&gt;&lt;/div&gt;</EmailContent><EmailPostedFile>Attachments_1.zip</EmailPostedFile><EmailsPerHour>500</EmailsPerHour></SendingDetails>

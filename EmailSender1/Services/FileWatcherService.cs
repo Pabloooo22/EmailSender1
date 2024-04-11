@@ -13,6 +13,7 @@ using System.Net.Mail;
 using System.IO;
 using Microsoft.AspNetCore.Http;
 using System.IO.Pipes;
+using System.Xml;
 
 namespace EmailSender.Services
 {
@@ -40,11 +41,18 @@ namespace EmailSender.Services
             XmlEmailEntity emailDetails = new XmlEmailEntity();
             SendMailService mailService = new SendMailService();
             EmailReciverDbContext dbContext = new EmailReciverDbContext();
-            XmlSerializer serializer = new XmlSerializer(typeof(XmlEmailEntity));
-            await using (FileStream fs = new FileStream(filePath, FileMode.Open))
+            //XmlSerializer serializer = new XmlSerializer(typeof(XmlEmailEntity));
+            XmlReaderSettings settings = new XmlReaderSettings();
+            settings.DtdProcessing = DtdProcessing.Parse;
+            using (XmlReader readerXml = XmlReader.Create(filePath, settings))
             {
-                emailDetails = (XmlEmailEntity)serializer.Deserialize(fs);
+                XmlSerializer serializer = new XmlSerializer(typeof(XmlEmailEntity));
+                emailDetails = (XmlEmailEntity)serializer.Deserialize(readerXml);
             }
+            //await using (FileStream fs = new FileStream(filePath, FileMode.Open))
+            //{
+            //    emailDetails = (XmlEmailEntity)serializer.Deserialize(fs);
+            //}
 
             string attachmentPath = Path.Combine(watcherPath, emailDetails.EmailPostedFile);
             string adressBookFilePath = Path.Combine(watcherPath, emailDetails.ToAdressBook);
