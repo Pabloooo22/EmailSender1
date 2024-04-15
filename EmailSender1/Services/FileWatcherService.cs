@@ -18,9 +18,13 @@ using System.Net;
 
 namespace EmailSender.Services
 {
+
     public interface IFileWatcherService
     {
+        string[] GetFilesList(string ftpServer, string username, string password, string folderPath);
+        void NewFile();
         void NewFileAdded(object sender, FileSystemEventArgs e);
+        void WatchFTPFolder();
     }
 
     public class FileWatcherService : IFileWatcherService
@@ -74,7 +78,7 @@ namespace EmailSender.Services
                 {
                     NewFile();
                     downloaded = false;
-                }
+                 }
                 previousFiles = currentFiles;
 
                 Thread.Sleep(5000);
