@@ -14,6 +14,7 @@ using System.IO;
 using Microsoft.AspNetCore.Http;
 using System.IO.Pipes;
 using System.Xml;
+using System.Net;
 
 namespace EmailSender.Services
 {
@@ -24,8 +25,9 @@ namespace EmailSender.Services
 
     public class FileWatcherService : IFileWatcherService
     {
-        private FileSystemWatcher watcher;
         private string watcherPath = "B:\\Projekty C++ - VS2022\\C#\\EmailSender1\\EmailSender1\\wwwroot\\XmlSendEmailFiles\\";
+        private bool downloaded = false;
+        private string downloladedFilePath;
 
         public FileWatcherService()
         {
@@ -33,11 +35,87 @@ namespace EmailSender.Services
             watcher.Filter = "*.xml";
             watcher.EnableRaisingEvents = true;
             watcher.Created += NewFileAdded;
+            Thread monitoringThread = new Thread(() =>
+            {
+                WatchFTPFolder();
+            });
+            monitoringThread.IsBackground = true;
+            monitoringThread.Start();
+        }
+
+        public void WatchFTPFolder()
+        {
+            var appConfig = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
+            string ftpServer = appConfig.GetValue<string>("FTPConfig:ftpServer");
+            string username = appConfig.GetValue<string>("FTPConfig:ftpUsername");
+            string password = appConfig.GetValue<string>("FTPConfig:ftpPassword");
+
+            string folderPath = appConfig.GetValue<string>("FTPConfig:ftpMonitoringFolder");
+
+            string[] previousFiles = GetFilesList(ftpServer, username, password, folderPath);
+
+            while (true)
+            {
+                string[] currentFiles = GetFilesList(ftpServer, username, password, folderPath);
+
+                foreach (string file in currentFiles)
+                {
+                    if (!Array.Exists(previousFiles, element => element == file))
+                    {
+                        using (WebClient ftpClient = new WebClient())
+                        {
+                            string ftpFilePath = Path.Combine(folderPath, file);
+                            ftpClient.Credentials = new NetworkCredential(username, password);
+                            ftpClient.DownloadFile(ftpServer + ftpFilePath, Path.Combine(watcherPath, file));
+                        }
+                    }
+                }
+                if (downloaded)
+                {
+                    NewFile();
+                    downloaded = false;
+                }
+                previousFiles = currentFiles;
+
+                Thread.Sleep(5000);
+            }
+        }
+
+        public string[] GetFilesList(string ftpServer, string username, string password, string folderPath)
+        {
+            try
+            {
+                FtpWebRequest request = (FtpWebRequest)WebRequest.Create(ftpServer + folderPath);
+                request.Method = WebRequestMethods.Ftp.ListDirectory;
+                request.Credentials = new NetworkCredential(username, password);
+
+                FtpWebResponse response = (FtpWebResponse)request.GetResponse();
+                Stream responseStream = response.GetResponseStream();
+                StreamReader reader = new StreamReader(responseStream);
+
+                string fileList = reader.ReadToEnd();
+                string[] files = fileList.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries);
+
+                reader.Close();
+                response.Close();
+
+                return files;
+            }
+            catch (WebException ex)
+            {
+                return new string[0];
+            }
         }
 
         public async void NewFileAdded(object sender, FileSystemEventArgs e)
         {
-            string filePath = e.FullPath;
+            downloladedFilePath = e.FullPath;
+            downloaded = true;
+        }
+
+        public async void NewFile()
+        {
+            string filePath = downloladedFilePath;
             XmlEmailEntity emailDetails = new XmlEmailEntity();
             SendMailService mailService = new SendMailService();
             EmailReciverDbContext dbContext = new EmailReciverDbContext();
