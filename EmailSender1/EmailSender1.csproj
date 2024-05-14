@@ -6,6 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+<EnvironmentName>Production</EnvironmentName>
+
 	<ItemGroup>
 		<Folder Include="wwwroot\assets\vendor\ckeditor5\" />
 		<Folder Include="wwwroot\XmlSendEmailFiles\" />
